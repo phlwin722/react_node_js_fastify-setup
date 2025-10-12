@@ -9,39 +9,37 @@ const axiosClient = axios.create({
 
 // ✅ Setup a response interceptor → listens for ALL responses
 axiosClient.interceptors.response.use(
-  // 🔹 If the response is successful (status 2xx), just return it
   (res) => res,
-
-  // 🔹 If an error happens (non-2xx response), handle it here
   async (error) => {
-    const originalRequest = error.config; // Save the failed request so we can retry it later
+    const originalRequest = error.config;
 
-    // ⚠️ Check: was the error due to "Unauthorized" (401)?
-    // Also check: did we already retry this request? (avoid infinite loops)
+    // ✅ Don't retry /refresh or /logout requests
     if (
-      error.response &&                     // Make sure server sent a response
-      error.response.status === 401 &&      // The error is "Unauthorized"
-      !originalRequest._retry               // Haven’t retried this request yet
+      originalRequest.url.includes("/refresh") ||
+      originalRequest.url.includes("/logout")
     ) {
-      originalRequest._retry = true;        // Mark this request so we don’t retry twice
+      return Promise.reject(error);
+    }
 
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
       try {
-        // 🔄 Ask backend to refresh the access token (using refreshToken in cookies)
         await axiosClient.post("/refresh");
-
-        // 🔁 If refresh worked → retry the original failed request
         return axiosClient(originalRequest);
       } catch (refreshError) {
-        // ❌ If refresh also failed (refreshToken expired or invalid) → force logout
-        window.location.href = "/login"; // Redirect user to login page
+        window.location.href = "/signin";
         return Promise.reject(refreshError);
       }
     }
 
-    // ❌ If error is NOT 401, or retry already happened → reject the error
     return Promise.reject(error);
   }
 );
+
 
 // ✅ Export axiosClient so you can use it anywhere in your frontend
 export default axiosClient;

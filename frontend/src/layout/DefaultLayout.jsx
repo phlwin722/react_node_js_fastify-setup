@@ -2,11 +2,12 @@ import { Outlet } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
 import { Navigate } from "react-router-dom";
 const DefaultLayout = () => {
-  const { token } = useStateContext();
+  const { type } = useStateContext();
 
-  if (token) {
-    return <Navigate to="dashboard" />
+  if (type) {
+    return <Navigate to="app" />
   }
+
   return (
     <div>
       <Outlet />
