@@ -26,6 +26,8 @@ async function migrate() {
   await conn.query(`
     CREATE TABLE users (
       id CHAR(36) PRIMARY KEY,               -- UUID v4 (always 36 chars)
+      first_name VARCHAR(255) NOT NULL,            -- Item first name
+      last_name VARCHAR(255) NOT NULL,            -- Item last name
       email VARCHAR(255) NOT NULL UNIQUE,    -- Unique email
       password VARCHAR(255) NOT NULL,        -- Hashed password (bcrypt)
       refresh_token TEXT,                    -- store latest refresh token

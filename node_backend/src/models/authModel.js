@@ -2,12 +2,12 @@
 // Handles DB queries for "users" table
 
 // Create new user in DB
-async function createUser(fastify, { id, email, password }) {
+async function createUser(fastify, { id, first_name, last_name, email, password }) {
   const conn = await fastify.mysql.getConnection(); // Open DB connection
   try {
     await conn.query(
-      "INSERT INTO users (id, email, password) VALUES (?, ?, ?)",
-      [id, email, password]
+      "INSERT INTO users (id, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?)",
+      [id, first_name, last_name, email, password]
     );
   } finally {
     conn.release(); // Always release DB connection

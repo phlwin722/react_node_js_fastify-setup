@@ -3,12 +3,8 @@
 
 const fp = require("fastify-plugin");
 const fastifyJwt = require("@fastify/jwt");
-const fastifyCookie = require("@fastify/cookie");
 
 async function jwtPlugin(fastify, opts) {
-  // Register cookie parser
-  fastify.register(fastifyCookie);
-
   // Register JWT with secret
   fastify.register(fastifyJwt, {
     secret: process.env.JWT_SECRET,

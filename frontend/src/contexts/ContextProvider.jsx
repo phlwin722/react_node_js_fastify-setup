@@ -1,49 +1,25 @@
 import { useState, createContext, useContext } from "react";
 
 const StateContext = createContext({
-  user: null,
-  token: null,
-  setUser: () => {},
-  setToken: () => {},
+  type: null,
+  setType: () => {},
 });
 
 export const ContextProvider = ({ children }) => {
-  const [user, _setUser] = useState(() => {
-    const userInfo = localStorage.getItem("user_info");
+  const [type, _setType] = useState(localStorage.getItem("type_user") || "");
 
-    return userInfo ? JSON.parse(userInfo) : null;
-  });
+  const setType = (type) => {
+    _setType(type);
 
-  const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
-
-  const setUser = (user) => {
-    _setUser(user);
-    if (user) {
-      localStorage.setItem("user_info", JSON.stringify(user));
+    if (type) {
+      localStorage.setItem("type_user", type);
     } else {
-      localStorage.removeItem("user_info");
-    }
-  };
-
-  const setToken = (token) => {
-    _setToken(token);
-
-    if (token) {
-      localStorage.setItem("ACCESS_TOKEN", token);
-    } else {
-      localStorage.removeItem("ACCESS_TOKEN");
+      localStorage.removeItem("type_user");
     }
   };
 
   return (
-    <StateContext.Provider
-      value={{
-        user,
-        token,
-        setToken,
-        setUser,
-      }}
-    >
+    <StateContext.Provider value={{ type, setType }}>
       {children}
     </StateContext.Provider>
   );

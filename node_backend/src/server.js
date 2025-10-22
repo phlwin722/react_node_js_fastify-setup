@@ -4,6 +4,7 @@
 require('dotenv').config();                   // Load .env variables (DB, JWT, PORT)
 const Fastify = require('fastify');           // Import Fastify
 const cors = require("@fastify/cors");
+const fastifyCookie = require("@fastify/cookie");
 
 // Plugins
 const mysqlPlugin = require('./plugins/mysql'); // MySQL plugin
@@ -19,11 +20,13 @@ const fastify = Fastify({ logger: true });
 
 // ✅ Register CORS (must come before routes)
 fastify.register(cors, {
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"], // your frontend dev URL
+  origin: ["http://127.0.0.1:5173"], // your frontend dev URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
   credentials: true,  // allow Authorization headers / cookies
 });
 
 // Register plugins
+fastify.register(fastifyCookie); // Register cookie plugin
 fastify.register(mysqlPlugin);  // Connect MySQL
 fastify.register(jwtPlugin);    // Enable JWT
 
